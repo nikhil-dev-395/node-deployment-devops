@@ -1,0 +1,54 @@
+# note : dont forget to change node-app with your app name
+
+name: Deploy to Azure VM (node-app)
+
+on:
+  push:
+    branches:
+      - main # Trigger deployment only when code is pushed to 'main'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🧾 Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          ref: main
+
+      - name: 🔐 Setup SSH Agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.AZURE_VM_PRIVATE_KEY }}
+
+      - name: 🚀 Deploy to Azure VM
+        run: |
+          ssh -o StrictHostKeyChecking=no azureuser@${{ secrets.AZURE_VM_IP }} << 'EOF'
+            set -e
+
+            echo "[INFO] 🚀 Starting deployment on Azure VM at $(date)"
+
+            # Move to project directory
+            cd /home/azureuser/node-app
+
+            echo "[INFO] 🌀 Pulling latest code from 'main'..."
+            git fetch origin main
+            git reset --hard origin/main
+
+            echo "[INFO] 📦 Installing dependencies..."
+            npm ci --legacy-peer-deps || npm install --legacy-peer-deps
+
+            echo "[INFO] 🛠️ Building TypeScript..."
+            npx tsc || npm run build
+
+            echo "[INFO] 🔁 Restarting app using PM2..."
+            pm2 delete node-app || true
+            pm2 start dist/index.js --name "node-app"
+            pm2 save
+
+            echo "[INFO] 🔄 Reloading Nginx..."
+            sudo systemctl reload nginx || true
+
+            echo "[SUCCESS] ✅ Deployment completed successfully at $(date)"
+          EOF
