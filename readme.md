@@ -11,14 +11,14 @@
 
 3. Fill in:
 
-   - Resource Group: Create new → scraper-rg
-   - VM Name: scraper-vm
+   - Resource Group: Create new → scrapper-rg
+   - VM Name: scrapper-vm
    - Region: Choose nearest (e.g., East US, Central India)
    - Image: Ubuntu Server 22.04 LTS
    - Size: Standard_B2s (2 vCPUs, 4GB RAM)
    - Username: azureuser
    - SSH public key source: Generate new key pair
-   - Key pair name: scraper-vm_key
+   - Key pair name: scrapper-vm_key
 
 4. Click "Review + Create" → "Create"
 5. Download the .pem file when prompted and save it safely!
@@ -57,13 +57,13 @@ On your Arch Linux machine:
 ```bash
 # Move key to .ssh directory
 mkdir -p ~/.ssh
-mv ~/Downloads/scraper-vm_key.pem ~/.ssh/
+mv ~/Downloads/scrapper-vm_key.pem ~/.ssh/
 
 # Set correct permissions
-chmod 400 ~/.ssh/scraper-vm_key.pem
+chmod 400 ~/.ssh/scrapper-vm_key.pem
 
 # Connect to VM (replace <VM_IP> with your actual IP)
-ssh -i ~/.ssh/scraper-vm_key.pem azureuser@<VM_IP>
+ssh -i ~/.ssh/scrapper-vm_key.pem azureuser@<VM_IP>
 ```
 
 **_Type yes when asked about fingerprint._**
@@ -101,7 +101,7 @@ sudo apt install -y build-essential git
 4. Settings:
 
 ```
-Note: Azure VM Scraper
+Note: Azure VM scrapper
 Expiration: 90 days (or No expiration)
 Scopes: Check ✅ repo
 
@@ -118,7 +118,7 @@ Click Generate token
 git clone https://<GITHUB_USERNAME>:<YOUR_PAT>@github.com/<USERNAME>/<REPO_NAME>.git
 
 # Example:
-# git clone https://john:ghp_abc123xyz@github.com/john/scraper-app.git
+# git clone https://john:ghp_abc123xyz@github.com/john/scrapper-app.git
 
 # Go to project directory
 cd <REPO_NAME>
@@ -163,7 +163,7 @@ Stop the app: Press Ctrl+C`
 sudo npm install -g pm2
 
 # Start your app with PM2
-pm2 start dist/index.js --name scraper-app
+pm2 start dist/index.js --name scrapper-app
 
 # Make PM2 start on system reboot
 pm2 startup systemd
@@ -178,7 +178,7 @@ pm2 save
 pm2 status
 
 # View logs
-pm2 logs scraper-app
+pm2 logs scrapper-app
 ```
 
 # Step 10: Install and Configure Nginx
@@ -188,7 +188,7 @@ pm2 logs scraper-app
 sudo apt install -y nginx
 
 # Create Nginx configuration file
-sudo nano /etc/nginx/sites-available/scraper
+sudo nano /etc/nginx/sites-available/scrapper
 ```
 
 **_Paste this configuration:_**
@@ -208,7 +208,7 @@ server {
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_cache_bypass $http_upgrade;
 
-        # Timeouts (important for scrapers)
+        # Timeouts (important for scrappers)
         proxy_connect_timeout 60s;
         proxy_send_timeout 60s;
         proxy_read_timeout 60s;
@@ -223,7 +223,7 @@ server {
 ```bash
 
 # Create symbolic link
-sudo ln -s /etc/nginx/sites-available/scraper /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/scrapper /etc/nginx/sites-enabled/
 
 # Remove default configuration
 sudo rm /etc/nginx/sites-enabled/default
@@ -257,7 +257,7 @@ sudo systemctl enable nginx
 # step 2 ssh into vm
 
 ```bash
-ssh -i ~/.ssh/scraper-vm_key.pem azureuser@<VM_IP>
+ssh -i ~/.ssh/scrapper-vm_key.pem azureuser@<VM_IP>
 ```
 
 # Step 3: Install Certbot
@@ -273,7 +273,7 @@ sudo apt install -y certbot python3-certbot-nginx
 **Edit Nginx config**
 
 ```bash
-sudo nano /etc/nginx/sites-available/scraper
+sudo nano /etc/nginx/sites-available/scrapper
 ```
 
 ```bash
