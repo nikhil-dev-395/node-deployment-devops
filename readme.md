@@ -216,6 +216,32 @@ server {
 }
 ```
 
+# step 11
+
+### Enable Nginx configuration:
+
+```bash
+
+# Create symbolic link
+sudo ln -s /etc/nginx/sites-available/scraper /etc/nginx/sites-enabled/
+
+# Remove default configuration
+sudo rm /etc/nginx/sites-enabled/default
+
+# Test Nginx configuration
+sudo nginx -t
+
+# If test passes, restart Nginx
+sudo systemctl restart nginx
+
+# Enable Nginx to start on boot
+sudo systemctl enable nginx
+```
+
+---
+
+---
+
 # Add SSL Certificate to Your Azure DNS Name
 
 # Step 1: Open Port 443 (HTTPS) on Azure
